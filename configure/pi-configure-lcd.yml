@@ -7,7 +7,7 @@
     py_script_arch: "{{ pi_home }}/master.zip"
     py_unarch: "{{ pi_home }}/pi-scripts-master"
     py_unarch_ren: "{{ pi_home }}/pi-scripts"
-    pi_user: pi
+    pi_user_grp: pi
   become: yes
   tasks:
   - name: install pip3
@@ -39,8 +39,9 @@
       dest: "{{ pi_home }}"
       remote_src: yes
   - name: cleanup archive ({{ py_script_arch }})
-    shell: 
-      cmd: rm {{ py_script_arch }}
+    file:
+      path: "{{ py_script_arch }}"
+      state: absent
   - name: cleanup {{ py_unarch_ren }} if it exists
     file:
       path: "{{ py_unarch_ren }}"
@@ -49,7 +50,10 @@
     shell:
       cmd: mv {{ py_unarch }} {{ py_unarch_ren }}
   - name: change owner/group {{ py_unarch_ren }} to pi
-    shell:
-      cmd: chown -R pi {{ py_unarch_ren }} && chgrp -R pi {{ py_unarch_ren }}
+    file:
+      path: "{{ py_unarch_ren }}"
+      owner: "{{ pi_user_grp }}"
+      group: "{{ pi_user_grp }}"
+      recurse: yes
 
 
