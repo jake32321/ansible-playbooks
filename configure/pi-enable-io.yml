@@ -1,0 +1,24 @@
+# ansible-playbook configure/pi-enable-io.yml -e'ansible_python_interpreter=/usr/bin/python3'
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: install pip3
+    apt:
+      name: python3-pip
+      state: latest
+  - name: enable spi
+    shell:
+      cmd: sed -i 's/#dtparam=spi=on/dtparam=spi=on/' /boot/config.txt
+  - name: enable i2c
+    shell:
+      cmd: sed -i 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/' /boot/config.txt
+  - name: install python packages
+    pip:
+      name:
+        - RPI.GPIO
+        - adafruit-blinka
+        - adafruit-circuitpython-charlcd
+  - name: reboot and apply changes
+    reboot:
+      reboot_timeout: 3600
