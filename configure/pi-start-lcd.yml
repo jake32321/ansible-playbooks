@@ -1,0 +1,8 @@
+# - hosts: all
+#   vars:
+#     py_script_home: /home/pi/py-scripts
+#     py_lcd: "{{ py_script_home }}/pi-lcd-usage.py"
+#   become: yes
+#   tasks:
+#   - name: start lcd script ({{ py_lcd }})
+#       cmd: ./

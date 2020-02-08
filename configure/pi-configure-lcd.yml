@@ -1,0 +1,55 @@
+# ansible-playbook configure/pi-enable-io.yml -e'ansible_python_interpreter=/usr/bin/python3'
+---
+- hosts: all
+  vars:
+    pi_conf: /boot/config.txt
+    pi_home: /home/pi
+    py_script_arch: "{{ pi_home }}/master.zip"
+    py_unarch: "{{ pi_home }}/pi-scripts-master"
+    py_unarch_ren: "{{ pi_home }}/pi-scripts"
+    pi_user: pi
+  become: yes
+  tasks:
+  - name: install pip3
+    apt:
+      name: python3-pip
+      state: latest
+  - name: enable spi
+    shell:
+      cmd: sed -i 's/#dtparam=spi=on/dtparam=spi=on/' {{ pi_conf }}
+  - name: enable i2c
+    shell:
+      cmd: sed -i 's/#dtparam=i2c_arm=on/dtparam=i2c_arm=on/' {{ pi_conf }}
+  - name: install python packages
+    pip:
+      name:
+        - RPI.GPIO
+        - adafruit-blinka
+        - adafruit-circuitpython-charlcd
+  - name: reboot and apply changes
+    reboot:
+      reboot_timeout: 3600
+  - name: download lcd python script to {{ pi_home }}
+    get_url:
+      dest: "{{ py_script_arch }}"
+      url: https://github.com/jake32321/pi-scripts/archive/master.zip
+  - name: extract scripts archive ({{ py_unarch }})
+    unarchive: 
+      src: "{{ py_script_arch }}"
+      dest: "{{ pi_home }}"
+      remote_src: yes
+  - name: cleanup archive ({{ py_script_arch }})
+    shell: 
+      cmd: rm {{ py_script_arch }}
+  - name: cleanup {{ py_unarch_ren }} if it exists
+    file:
+      path: "{{ py_unarch_ren }}"
+      state: absent
+  - name: rename scripts to {{ py_unarch_ren }}
+    shell:
+      cmd: mv {{ py_unarch }} {{ py_unarch_ren }}
+  - name: change owner/group {{ py_unarch_ren }} to pi
+    shell:
+      cmd: chown -R pi {{ py_unarch_ren }} && chgrp -R pi {{ py_unarch_ren }}
+
+
