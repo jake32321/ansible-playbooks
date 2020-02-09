@@ -1,0 +1,4 @@
+# ansible-playbook playbook-sets/configure-start.yml -e'ansible_python_interpreter=/usr/bin/python3'
+---
+- include: ../configure/pi-configure.yml
+- include: ../configure/pi-start-lcd.yml

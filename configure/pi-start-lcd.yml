@@ -1,8 +1,15 @@
-# - hosts: all
-#   vars:
-#     py_script_home: /home/pi/py-scripts
-#     py_lcd: "{{ py_script_home }}/pi-lcd-usage.py"
-#   become: yes
-#   tasks:
-#   - name: start lcd script ({{ py_lcd }})
-#       cmd: ./
+# ansible-playbook configure/pi-start-lcd.yml -e'ansible_python_interpreter=/usr/bin/python3'
+---
+- hosts: all
+  vars:
+    py_script_home: /home/pi/pi-scripts
+    py_lcd_script: "{{ py_script_home }}/pi-lcd-usage.py"
+    start_script: "{{ py_script_home }}/start-python-proc.sh"
+  tasks:
+  - name: kill existing python3 processes
+    shell:
+      cmd: pkill -9 -f pi-lcd-usage.py
+    ignore_errors: yes # If the process doesn't exist, Ignore and proceed.
+  - name: start lcd script ({{ py_lcd_script }})
+    shell:
+      cmd: "{{ start_script }} {{ py_lcd_script }}"
