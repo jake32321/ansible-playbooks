@@ -1,4 +1,4 @@
-# ansible-playbook configure/pi-enable-io.yml -e'ansible_python_interpreter=/usr/bin/python3'
+# ansible-playbook configure/pi-configure.yml -e'ansible_python_interpreter=/usr/bin/python3'
 ---
 - hosts: all
   vars:
@@ -23,9 +23,11 @@
   - name: install python packages
     pip:
       name:
-        - RPI.GPIO
-        - adafruit-blinka
-        - adafruit-circuitpython-charlcd
+      - psutil
+      - RPI.GPIO
+      - adafruit-blinka
+      - adafruit-circuitpython-charlcd
+      - gpiozero
   - name: reboot and apply changes
     reboot:
       reboot_timeout: 3600

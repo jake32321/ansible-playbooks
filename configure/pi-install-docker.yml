@@ -1,0 +1,30 @@
+# ansible-playbook configure/pi-install-docker.yml -e'ansible_python_interpreter=/usr/bin/python3'
+---
+- hosts: all
+  vars:
+    tmp_dir: /tmp
+  become: true
+  tasks:
+    - name: download containerd.io
+      get_url:
+       dest: "{{ tmp_dir }}"
+       url: https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/containerd.io_1.2.6-3_armhf.deb
+    - name: download docker-ce-cli
+      get_url:
+        dest: "{{ tmp_dir }}"
+        url: https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/docker-ce-cli_18.09.7~3-0~debian-buster_armhf.deb
+    - name: download docker-ce
+      get_url:
+        dest: "{{ tmp_dir }}"
+        url: https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/docker-ce_18.09.7~3-0~debian-buster_armhf.deb
+    - name: install containerd.io
+      apt: deb={{ tmp_dir }}/containerd.io_1.2.6-3_armhf.deb
+    - name: install docker-ce-cli
+      apt: deb={{ tmp_dir }}/docker-ce-cli_18.09.7~3-0~debian-buster_armhf.deb
+    - name: install docker-ce
+      apt: deb={{ tmp_dir }}/docker-ce_18.09.7~3-0~debian-buster_armhf.deb
+
+
+    
+
+
