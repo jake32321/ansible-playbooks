@@ -1,0 +1,13 @@
+# ansible-playbook docker/setup-portainer.yml -e'ansible_python_interpreter=/usr/bin/python3'
+
+# PREREQ: Install docker. Making adding default user to docker group is a plus.
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: pull portainer
+      shell:
+        cmd: docker pull portainer/portainer
+    - name: start portainer
+      shell:
+        cmd: docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock portainer/portainer
